@@ -1,8 +1,22 @@
-import '../styles/globals.css'
 import type { AppProps } from 'next/app'
+import { CssBaseline, ThemeProvider } from '@mui/material';
+
+import '../styles/globals.css'
+import { lightTheme } from '../themes';
+
+import '@fontsource/roboto/300.css';
+import '@fontsource/roboto/400.css';
+import '@fontsource/roboto/500.css';
+import '@fontsource/roboto/700.css';
+
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <ThemeProvider theme={lightTheme}>
+      <CssBaseline />
+      <Component {...pageProps} />
+    </ThemeProvider>
+  )
 }
 
 export default MyApp
