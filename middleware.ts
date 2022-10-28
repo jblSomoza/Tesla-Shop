@@ -1,19 +1,16 @@
-import { NextResponse } from 'next/server'
-import type { NextRequest } from 'next/server'
-import * as jose from 'jose'
+// middleware.ts
+import type { NextRequest } from 'next/server';
+import { getToken } from "next-auth/jwt";
+import { NextResponse } from 'next/server';
 
+
+const secret = process.env.NEXTAUTH_SECRET;
+
+// This function can be marked `async` if using `await` inside
 export async function middleware(request: NextRequest) {
-    const token = request.cookies.get('token') as string;
-    
-    try {
-        await jose.jwtVerify(token, new TextEncoder().encode(process.env.JWT_SECRET_SEED));
-        return NextResponse.next();
-    } catch (error) {
-        const { protocol, host, pathname  } = request.nextUrl
-        return NextResponse.redirect(`${protocol}//${host}/auth/login?p=${pathname}`);
-    }
+  return NextResponse.next();
 }
-
+ 
 export const config = {
-  matcher: '/checkout/:path*',
-}
+  matcher: ['/checkout/:path*'],
+};

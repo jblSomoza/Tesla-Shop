@@ -1,16 +1,17 @@
-import React, { useContext, useState } from 'react'
+import React, { useEffect, useState } from 'react'
+import { GetServerSideProps } from 'next'
 import NextLink from 'next/link'
+import { getSession, signIn, getProviders } from 'next-auth/react';
 
 import { useForm } from 'react-hook-form';
 
-import { Box, Grid, Typography, TextField, Button, Link, Chip } from '@mui/material'
+import { Box, Grid, Typography, TextField, Button, Link, Chip, Divider } from '@mui/material'
 import { ErrorOutline } from '@mui/icons-material';
 
 import { AuthLayout } from '../../components/layouts'
 import { validations } from '../../utils';
-import { tesloApi } from '../../api';
-import { AuthContext } from '../../context';
 import { useRouter } from 'next/router';
+
 
 type FormData = {
     email: string,
@@ -20,25 +21,31 @@ type FormData = {
 
 const LoginPage = () => {
     const router = useRouter();
-    const { loginUser } = useContext(AuthContext);
-    const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>();
+    const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
     const [showError, setShowError] = useState(false);
+    const [providers, setProviders] = useState<any>({});
+
+    useEffect(() => {
+      getProviders().then( prov => {
+        setProviders(prov);
+      })
+    }, [])
+    
     
     const onLoginUser = async({ email, password } : FormData) => {
         setShowError(false);
 
-        const isValidLogin = await loginUser(email, password);
-
-        if ( !isValidLogin ) {
-            setShowError(true);
-            setTimeout(() => {
-                setShowError(false)
-            }, 3000);
-            return;
-        }
-
-        const destination = router.query.p?.toString() || '/';
-        router.replace(destination);
+        // const isValidLogin = await loginUser(email, password);
+        // if ( !isValidLogin ) {
+        //     setShowError(true);
+        //     setTimeout(() => {
+        //         setShowError(false)
+        //     }, 3000);
+        //     return;
+        // }
+        // const destination = router.query.p?.toString() || '/';
+        // router.replace(destination);
+        await signIn('credentials', { email, password });
     }
 
     return (
@@ -108,11 +115,52 @@ const LoginPage = () => {
                                 </Link>
                             </NextLink>
                         </Grid>
+
+                        <Grid item xs={12} display='flex' flexDirection='column' justifyContent='end'>
+                            <Divider sx={{ width: '100%', mb: 2 }} />
+                            {
+                                Object.values(providers).map(( provider : any) => {
+                                    if (provider.id === 'credentials') return (<div key="credentials"></div>)
+
+                                    return (
+                                        <Button
+                                            key={ provider.id }
+                                            variant="outlined"
+                                            fullWidth
+                                            color='primary'
+                                            sx={{ mb: 1 }}
+                                            onClick={ () => signIn(provider.id) }
+                                        >
+                                            { provider.name}
+                                        </Button>
+                                    )
+                                })
+                            }
+                        </Grid>
+
                     </Grid>
                 </Box>
             </form>
         </AuthLayout>
     )
+}
+
+export const getServerSideProps: GetServerSideProps = async ({ req, query }) => {
+    const session = await getSession({ req });
+    const { callbackUrl =  '/' } = query;
+
+    if(session) {
+        return {
+            redirect: {
+                destination: callbackUrl.toString(),
+                permanent: false
+            }
+        }
+    }
+
+    return {
+        props: {}
+    }
 }
 
 export default LoginPage
