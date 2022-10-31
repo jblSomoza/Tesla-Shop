@@ -25,8 +25,9 @@ const LoginPage = () => {
     const [showError, setShowError] = useState(false);
     const [providers, setProviders] = useState<any>({});
 
-    useEffect(() => {
+    useEffect(() => {        
       getProviders().then( prov => {
+        
         setProviders(prov);
       })
     }, [])

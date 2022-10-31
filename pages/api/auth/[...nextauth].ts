@@ -1,6 +1,7 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import GithubProvider from 'next-auth/providers/github';
 import Credentials from 'next-auth/providers/credentials';
+
 import { dbUsers } from '../../../database';
 
 export const authOptions : NextAuthOptions = {
@@ -29,6 +30,10 @@ export const authOptions : NextAuthOptions = {
   pages:{
     signIn: '/auth/login',
     newUser: '/auth/register'
+  },
+
+  jwt: {
+
   },
 
   session: {
@@ -60,7 +65,7 @@ export const authOptions : NextAuthOptions = {
       session.user = token.user as any;
 
       return session;
-    },
+    }
   }
 }
 
