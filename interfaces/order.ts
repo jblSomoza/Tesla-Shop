@@ -21,18 +21,18 @@ export interface IOrderItem {
     size     : ISize;
     quantity : number;
     slug     : string;
-    images    : string;
+    image    : string;
     price    : number;
     gender   : string;
 }
 
 export interface ShippingAddress {
-    firstName: string;
-    lastName : string;
-    address  : string;
-    address2?: string;
-    zip      : string;
-    city     : string;
-    country  : string;
-    phone    : string;
+    firstName : string;
+    lastName  : string;
+    address   : string;
+    address2? : string;
+    zip       : string;
+    city      : string;
+    country   : string;
+    phone     : string;
 }
