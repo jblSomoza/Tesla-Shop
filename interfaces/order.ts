@@ -12,7 +12,9 @@ export interface IOrder {
     tax             : number;
     total           : number;
     isPaid          : boolean;
-    paidAt?         : string
+    paidAt?         : string;
+
+    transactionId   : string;
 }
 
 export interface IOrderItem {
