@@ -16,7 +16,7 @@ export const ProductSlideshow:FC<Props> = ({ images }) => {
     >
       {
         images.map((image) => {
-          const url = `/products/${image}`;
+          const url = `${image}`;
           return(
             <div key={url}>
               <img src={url} />
